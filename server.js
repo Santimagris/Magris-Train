@@ -194,7 +194,7 @@ app.get('/api/export/:userId', async (req, res) => {
     // Hoja 1: Resumen
     const wsR = wb.addWorksheet('Resumen');
     header(wsR, [{ header: 'Métrica', key: 'k', width: 34 }, { header: 'Valor', key: 'v', width: 40 }]);
-    const sessions = new Set(sets.map(s => new Date(s.logged_at).getTime())).size;
+    const sessions = new Set(sets.map(s => fmtDate(s.logged_at))).size;
     const bwFirst = bw[0], bwLast = bw[bw.length - 1];
     const rows = [
       ['Usuario', u.name],

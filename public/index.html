@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#12924E">
+<title>Registro de Entrenamiento</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">Registro de Entrenamiento</div>
+    <h1>Santino &amp; Gino</h1>
+    <div class="userseg" id="userseg"></div>
+  </header>
+
+  <!-- ENTRENAR -->
+  <section class="panel on" id="p-train">
+    <div class="seg">
+      <button id="tabA" class="on" data-day="A">Día A</button>
+      <button id="tabB" data-day="B">Día B</button>
+    </div>
+    <div id="exlist"></div>
+  </section>
+
+  <!-- HISTORIAL -->
+  <section class="panel" id="p-hist">
+    <div class="sectlabel">Historial de <span id="histUser">—</span></div>
+    <div id="histlist"></div>
+  </section>
+
+  <!-- PESO -->
+  <section class="panel" id="p-weight">
+    <div class="sectlabel">Peso corporal de <span id="wUser">—</span></div>
+    <div class="card">
+      <div class="bwrow">
+        <input id="bwInput" inputmode="decimal" placeholder="Peso en kg (ej. 95.5)">
+        <button id="bwSave">Guardar</button>
+      </div>
+      <p style="font-size:12px;color:var(--dim);margin:9px 0 0">La fecha y hora se guardan solas. Pesate 1 vez por semana, mismo día, en ayunas.</p>
+    </div>
+    <div class="bwstat" id="bwStat"></div>
+    <div class="card" id="bwList"></div>
+  </section>
+
+  <!-- PLAN -->
+  <section class="panel plan" id="p-plan">
+    <div class="card">
+      <h3 style="margin-top:0">Rutina · 3 días (A / B alternados)</h3>
+      <p>Semana 1: A-B-A · Semana 2: B-A-B. Dejá 1 día entre sesiones. Domingo = fútbol.</p>
+      <h4>Día A</h4>
+      <table><tr><th>Ejercicio</th><th>Series</th></tr>
+        <tr><td>Sentadilla con barra</td><td>3 × 6-8</td></tr>
+        <tr><td>Press de banca plano</td><td>3 × 8-10</td></tr>
+        <tr><td>Remo con barra o polea</td><td>3 × 8-10</td></tr>
+        <tr><td>Press militar mancuernas</td><td>3 × 10-12</td></tr>
+        <tr><td>Curl de bíceps</td><td>3 × 10-12</td></tr>
+        <tr><td>Plancha abdominal</td><td>3 × 30-45 s</td></tr>
+      </table>
+      <h4>Día B</h4>
+      <table><tr><th>Ejercicio</th><th>Series</th></tr>
+        <tr><td>Peso muerto rumano</td><td>3 × 6-8</td></tr>
+        <tr><td>Press inclinado mancuernas</td><td>3 × 8-10</td></tr>
+        <tr><td>Jalón al pecho (polea)</td><td>3 × 10-12</td></tr>
+        <tr><td>Prensa de piernas</td><td>3 × 10-12</td></tr>
+        <tr><td>Elevaciones laterales</td><td>3 × 12-15</td></tr>
+        <tr><td>Tríceps en polea con soga</td><td>3 × 12-15</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Progresión (doble progresión)</h3>
+      <p>Empezás en el número bajo del rango. Sesión a sesión sumás reps hasta el tope en todas las series → ahí <b>subís el peso</b> (2,5 kg tren superior / 5 kg piernas) y volvés a empezar. Dejá 1-2 reps en el tanque. Anotá siempre.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Nutrición (resumen)</h3>
+      <ul>
+        <li><b>Proteína manda:</b> ~160-170 g/día, comela primero en cada plato.</li>
+        <li><b>Un plato, sin repetir.</b> Ganas de repetir → esperá 10 min con agua/Coca Zero.</li>
+        <li><b>Recortá guarnición, no proteína.</b> Al horno &gt; frito. Pan máx. 1 porción/día.</li>
+        <li><b>2 frutas/día</b> (banana, manzana) por la fibra.</li>
+        <li><b>Objetivo ~2.250 kcal.</b> Regla 80/20: un gusto el finde no arruina nada.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Suplementos</h3>
+      <ul>
+        <li><b>Creatina:</b> 5 g todos los días (también descanso y fútbol). Horario da igual.</li>
+        <li><b>Proteína:</b> 1-2 scoops para completar el objetivo del día. Con agua.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Pasos + fútbol</h3>
+      <p>8.000-10.000 pasos/día (arrancá con 6-7k). Es el mayor motor de pérdida de grasa. Domingo el fútbol es el cardio. El detalle completo está en el PDF del plan.</p>
+    </div>
+  </section>
+
+  <!-- EXPORTAR -->
+  <section class="panel" id="p-export">
+    <div class="sectlabel">Exportar datos</div>
+    <div class="card">
+      <p style="font-size:13.5px;color:var(--dim);margin:0 0 14px">
+        Descarga un Excel con <b style="color:var(--text)">TODO</b> lo registrado de <span id="expUser">—</span>:
+        cada serie con fecha y hora, la progresión por ejercicio, y todos los pesajes corporales.
+        Mandámelo para que lo analice.
+      </p>
+      <button class="expbtn" id="expBtn">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M8 11l4 4 4-4M4 21h16"/></svg>
+        Descargar Excel
+      </button>
+    </div>
+    <div class="card">
+      <p style="font-size:12.5px;color:var(--dim);margin:0">El archivo tiene 4 hojas: <b style="color:var(--text)">Resumen</b>, <b style="color:var(--text)">Entrenamientos</b> (todas las series), <b style="color:var(--text)">Progresión</b> y <b style="color:var(--text)">Peso corporal</b>.</p>
+    </div>
+  </section>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<nav>
+  <div class="navin">
+    <button class="on" data-p="train"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5l11 11M4 8l-2 2 3 3M20 16l2-2-3-3M8 4L6 6M16 20l2-2"/></svg><span>Entrenar</span></button>
+    <button data-p="hist"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9 9 0 0 0-8 5M3 4v4h4M12 7v5l3 2"/></svg><span>Historial</span></button>
+    <button data-p="weight"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 0 0-9 9 9 9 0 0 0 18 0 9 9 0 0 0-9-9zM12 12l3-4"/></svg><span>Peso</span></button>
+    <button data-p="plan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h9l5 5v13H6zM15 3v5h5M9 13h7M9 17h7"/></svg><span>Plan</span></button>
+    <button data-p="export"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M8 11l4 4 4-4M4 21h16"/></svg><span>Excel</span></button>
+  </div>
+</nav>
+
+<script src="app.js"></script>
+</body>
+</html>

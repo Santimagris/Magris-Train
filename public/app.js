@@ -139,8 +139,12 @@ function dayDetailHtml(sets) {
   return list.map(([, ex]) => {
     const chips = ex.sets.sort((a, b) => (a.set_number || 0) - (b.set_number || 0))
       .map(s => `<li>${Number(s.weight)}×${s.reps}</li>`).join('');
+    const ids = ex.sets.map(s => s.id).join(',');
     return `<div class="exrow">
-      <div class="exrow-name">${ex.name}</div>
+      <div class="exrow-top">
+        <div class="exrow-name">${ex.name}</div>
+        <button class="del-ex" data-ids="${ids}" data-name="${ex.name}" title="Borrar este ejercicio">✕</button>
+      </div>
       <ul>${chips}</ul>
       ${ex.note ? `<div class="note">“${ex.note}”</div>` : ''}
     </div>`;
@@ -188,6 +192,20 @@ function renderHist() {
     h.querySelector('.chev').classList.toggle('up');
   });
   box.querySelectorAll('.del[data-day]').forEach(b => b.onclick = () => delDay(b.dataset.day));
+  box.querySelectorAll('.del-ex').forEach(b => b.onclick = (e) => { e.stopPropagation(); delExercise(b.dataset.ids, b.dataset.name); });
+}
+
+async function delExercise(idsStr, name) {
+  const ids = idsStr.split(',').map(Number).filter(Boolean);
+  if (!ids.length) return;
+  if (!confirm(`¿Borrar "${name}" de este día? (${ids.length} series)`)) return;
+  const res = await api('/api/sets/delete', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ids }),
+  });
+  if (res.error) { toast('Error: ' + res.error); return; }
+  toast('Ejercicio borrado');
+  await reloadUserData(); renderHist(); renderTrain();
 }
 
 async function delDay(dateKey) {

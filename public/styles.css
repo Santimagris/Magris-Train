@@ -93,7 +93,12 @@ header h1{font-size:24px;font-weight:800;letter-spacing:-.02em;margin-top:3px}
 .detail.hidden{display:none}
 .exrow{padding:10px 0;border-bottom:1px solid var(--border)}
 .exrow:last-of-type{border-bottom:0}
+.exrow-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
 .exrow-name{font-weight:700;font-size:14px}
+.del-ex{flex:none;background:transparent;border:1px solid var(--border);color:var(--danger);
+  width:26px;height:26px;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;line-height:1;
+  display:grid;place-items:center}
+.del-ex:active{transform:scale(.9)}
 .session ul{margin:7px 0 0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:6px}
 .session li{font-size:13px;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;
   padding:4px 9px;font-variant-numeric:tabular-nums}

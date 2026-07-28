@@ -122,38 +122,84 @@ async function saveExercise(exId, btn) {
   setTimeout(() => renderTrain(), 700);
 }
 
-// ---------- Historial ----------
+// ---------- Historial (agrupado por día) ----------
+const fmtWeekday = v => new Intl.DateTimeFormat('es-AR', { timeZone: 'America/Argentina/Buenos_Aires', weekday: 'long' }).format(new Date(v));
+const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+const cssId = k => 'd' + k.replace(/[^0-9]/g, '');
+
+function dayDetailHtml(sets) {
+  const byEx = {};
+  sets.forEach(s => {
+    (byEx[s.exercise_id] ||= { name: s.exercise, day: s.day, sets: [], note: null });
+    byEx[s.exercise_id].sets.push(s);
+    if (s.notes) byEx[s.exercise_id].note = s.notes;
+  });
+  const order = EXERCISES.map(e => e.id);
+  const list = Object.entries(byEx).sort((a, b) => order.indexOf(+a[0]) - order.indexOf(+b[0]));
+  return list.map(([, ex]) => {
+    const chips = ex.sets.sort((a, b) => (a.set_number || 0) - (b.set_number || 0))
+      .map(s => `<li>${Number(s.weight)}×${s.reps}</li>`).join('');
+    return `<div class="exrow">
+      <div class="exrow-name">${ex.name}</div>
+      <ul>${chips}</ul>
+      ${ex.note ? `<div class="note">“${ex.note}”</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
 function renderHist() {
   const box = $('#histlist');
   if (!SETS.length) { box.innerHTML = '<div class="empty">Todavía no hay entrenamientos registrados.</div>'; return; }
-  // agrupar por (timestamp + ejercicio)
-  const groups = {};
+  const byDate = {};
   SETS.forEach(s => {
-    const key = new Date(s.logged_at).getTime() + '|' + s.exercise_id;
-    (groups[key] ||= { ex: s.exercise, day: s.day, at: s.logged_at, exId: s.exercise_id, sets: [], note: s.notes });
-    groups[key].sets.push(s);
+    const key = fmtDate(s.logged_at);
+    (byDate[key] ||= { key, ts: 0, sets: [] });
+    byDate[key].sets.push(s);
+    byDate[key].ts = Math.max(byDate[key].ts, new Date(s.logged_at).getTime());
   });
-  const arr = Object.values(groups).sort((a, b) => new Date(b.at) - new Date(a.at));
-  box.innerHTML = arr.map(g => {
-    const sets = g.sets.sort((a, b) => (a.set_number || 0) - (b.set_number || 0))
-      .map(s => `<li>${Number(s.weight)}×${s.reps}</li>`).join('');
+  const days = Object.values(byDate).sort((a, b) => b.ts - a.ts);
+  box.innerHTML = days.map((d, idx) => {
+    const nEx = new Set(d.sets.map(s => s.exercise_id)).size;
+    const letters = [...new Set(d.sets.map(s => s.day))].sort().join('/');
+    const open = idx === 0;
     return `<div class="session">
-      <div class="sh">
-        <div><div class="sd">${fmtDate(g.at)} · ${fmtTime(g.at)}</div><div class="sx">${g.ex}</div></div>
-        <span class="badge">Día ${g.day}</span>
+      <div class="sh" data-toggle="${cssId(d.key)}">
+        <div>
+          <div class="sd">${cap(fmtWeekday(d.ts))}</div>
+          <div class="sx">Entrenamiento · ${d.key}</div>
+          <div class="sd">${nEx} ejercicio${nEx > 1 ? 's' : ''} · ${d.sets.length} series</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:9px">
+          <span class="badge">Día ${letters}</span>
+          <span class="chev ${open ? 'up' : ''}">▾</span>
+        </div>
       </div>
-      <ul>${sets}</ul>
-      ${g.note ? `<div class="note">“${g.note}”</div>` : ''}
-      <div style="text-align:right;margin-top:9px"><button class="del" data-at="${g.at}" data-ex="${g.exId}">Borrar</button></div>
+      <div class="detail ${open ? '' : 'hidden'}" id="det-${cssId(d.key)}">
+        ${dayDetailHtml(d.sets)}
+        <div style="text-align:right;margin-top:12px">
+          <button class="del" data-day="${d.key}">Borrar entrenamiento</button>
+        </div>
+      </div>
     </div>`;
   }).join('');
-  box.querySelectorAll('.del').forEach(b => b.onclick = () => delSession(b.dataset.at, b.dataset.ex));
+
+  box.querySelectorAll('.sh[data-toggle]').forEach(h => h.onclick = () => {
+    $('#det-' + h.dataset.toggle).classList.toggle('hidden');
+    h.querySelector('.chev').classList.toggle('up');
+  });
+  box.querySelectorAll('.del[data-day]').forEach(b => b.onclick = () => delDay(b.dataset.day));
 }
 
-async function delSession(at, exId) {
-  if (!confirm('¿Borrar este registro?')) return;
-  await fetch(`/api/session?user_id=${currentUser}&exercise_id=${exId}&logged_at=${encodeURIComponent(at)}`, { method: 'DELETE' });
-  toast('Borrado');
+async function delDay(dateKey) {
+  const ids = SETS.filter(s => fmtDate(s.logged_at) === dateKey).map(s => s.id);
+  if (!ids.length) return;
+  if (!confirm(`¿Borrar el entrenamiento del ${dateKey}? (${ids.length} series)`)) return;
+  const res = await api('/api/sets/delete', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ids }),
+  });
+  if (res.error) { toast('Error: ' + res.error); return; }
+  toast('Entrenamiento borrado');
   await reloadUserData(); renderHist(); renderTrain();
 }
 

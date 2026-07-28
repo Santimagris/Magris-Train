@@ -81,15 +81,23 @@ header h1{font-size:24px;font-weight:800;letter-spacing:-.02em;margin-top:3px}
 /* History */
 .session{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);
   padding:13px 15px;box-shadow:var(--shadow);margin-bottom:10px}
-.session .sh{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.session .sh{display:flex;justify-content:space-between;align-items:center;gap:8px;cursor:pointer;
+  -webkit-tap-highlight-color:transparent}
 .session .sd{font-size:12px;color:var(--dim);font-weight:600}
-.session .sx{font-weight:700;font-size:15px;margin-top:2px}
+.session .sx{font-weight:750;font-size:16px;margin:2px 0;letter-spacing:-.01em}
 .session .badge{flex:none;font-size:11px;font-weight:700;color:var(--accent);background:var(--accent-soft);
-  padding:2px 8px;border-radius:20px}
-.session ul{margin:8px 0 0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:6px}
+  padding:2px 8px;border-radius:20px;white-space:nowrap}
+.chev{color:var(--dim);font-size:14px;transition:transform .2s}
+.chev.up{transform:rotate(180deg)}
+.detail{margin-top:12px;padding-top:4px;border-top:1px solid var(--border)}
+.detail.hidden{display:none}
+.exrow{padding:10px 0;border-bottom:1px solid var(--border)}
+.exrow:last-of-type{border-bottom:0}
+.exrow-name{font-weight:700;font-size:14px}
+.session ul{margin:7px 0 0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:6px}
 .session li{font-size:13px;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;
   padding:4px 9px;font-variant-numeric:tabular-nums}
-.session .note{font-size:12.5px;color:var(--dim);margin-top:8px;font-style:italic}
+.session .note{font-size:12.5px;color:var(--dim);margin-top:6px;font-style:italic}
 .del{background:transparent;border:1px solid var(--border);color:var(--danger);border-radius:8px;
   padding:5px 10px;font-size:12px;font-weight:700;cursor:pointer}
 

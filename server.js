@@ -133,12 +133,14 @@ app.delete('/api/sets/:id', async (req, res) => {
   catch (e) { res.status(500).json({ error: e.message }); }
 });
 
-// Borra todas las series de una misma sesión (mismo ejercicio + timestamp)
-app.delete('/api/session', async (req, res) => {
+// Borrado por lista de IDs (confiable). Sirve para borrar un ejercicio o un día entero.
+app.post('/api/sets/delete', async (req, res) => {
   try {
-    const { user_id, exercise_id, logged_at } = req.query;
-    await pool.query('DELETE FROM sets WHERE user_id=$1 AND exercise_id=$2 AND logged_at=$3', [user_id, exercise_id, logged_at]);
-    res.json({ ok: true });
+    const { ids } = req.body;
+    if (!Array.isArray(ids) || !ids.length) return res.status(400).json({ error: 'Sin IDs para borrar' });
+    const clean = ids.map(Number).filter(n => Number.isInteger(n));
+    await pool.query('DELETE FROM sets WHERE id = ANY($1::int[])', [clean]);
+    res.json({ ok: true, deleted: clean.length });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 

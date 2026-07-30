@@ -138,7 +138,7 @@ function dayDetailHtml(sets) {
   const list = Object.entries(byEx).sort((a, b) => order.indexOf(+a[0]) - order.indexOf(+b[0]));
   return list.map(([, ex]) => {
     const chips = ex.sets.sort((a, b) => (a.set_number || 0) - (b.set_number || 0))
-      .map(s => `<li>${Number(s.weight)}×${s.reps}</li>`).join('');
+      .map(s => `<li>${Number(s.weight)}×${s.reps}<button class="del-set" data-id="${s.id}" title="Borrar esta serie">×</button></li>`).join('');
     const ids = ex.sets.map(s => s.id).join(',');
     return `<div class="exrow">
       <div class="exrow-top">
@@ -193,6 +193,18 @@ function renderHist() {
   });
   box.querySelectorAll('.del[data-day]').forEach(b => b.onclick = () => delDay(b.dataset.day));
   box.querySelectorAll('.del-ex').forEach(b => b.onclick = (e) => { e.stopPropagation(); delExercise(b.dataset.ids, b.dataset.name); });
+  box.querySelectorAll('.del-set').forEach(b => b.onclick = (e) => { e.stopPropagation(); delSet(b.dataset.id); });
+}
+
+async function delSet(id) {
+  if (!confirm('¿Borrar esta serie?')) return;
+  const res = await api('/api/sets/delete', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ids: [Number(id)] }),
+  });
+  if (res.error) { toast('Error: ' + res.error); return; }
+  toast('Serie borrada');
+  await reloadUserData(); renderHist(); renderTrain();
 }
 
 async function delExercise(idsStr, name) {

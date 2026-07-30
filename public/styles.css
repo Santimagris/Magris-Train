@@ -101,7 +101,10 @@ header h1{font-size:24px;font-weight:800;letter-spacing:-.02em;margin-top:3px}
 .del-ex:active{transform:scale(.9)}
 .session ul{margin:7px 0 0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:6px}
 .session li{font-size:13px;background:var(--surface-2);border:1px solid var(--border);border-radius:8px;
-  padding:4px 9px;font-variant-numeric:tabular-nums}
+  padding:4px 6px 4px 9px;font-variant-numeric:tabular-nums;display:inline-flex;align-items:center;gap:5px}
+.del-set{background:transparent;border:0;color:var(--danger);font-size:15px;font-weight:800;cursor:pointer;
+  line-height:1;padding:0 2px;opacity:.75}
+.del-set:active{transform:scale(.85)}
 .session .note{font-size:12.5px;color:var(--dim);margin-top:6px;font-style:italic}
 .del{background:transparent;border:1px solid var(--border);color:var(--danger);border-radius:8px;
   padding:5px 10px;font-size:12px;font-weight:700;cursor:pointer}

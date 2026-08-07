@@ -18,8 +18,8 @@ const EXERCISES = [
   ['A', 'Remo con barra o polea', '3 × 8-10', 3],
   ['A', 'Press militar con mancuernas', '3 × 10-12', 4],
   ['A', 'Curl de bíceps', '3 × 10-12', 5],
-  ['A', 'Plancha abdominal', '3 × 30-45 s', 6],
-  ['A', 'Tríceps francés con barra Z', '3 × 10-12', 7],
+  ['A', 'Tríceps francés con barra Z', '3 × 10-12', 6],
+  ['A', 'Plancha abdominal', '3 × 30-45 s', 8],
   ['B', 'Peso muerto rumano', '3 × 6-8', 1],
   ['B', 'Press inclinado con mancuernas', '3 × 8-10', 2],
   ['B', 'Jalón al pecho (polea)', '3 × 10-12', 3],
@@ -76,6 +76,8 @@ async function init() {
       AND NOT EXISTS (SELECT 1 FROM sets s WHERE s.exercise_id = exercises.id)
       AND NOT EXISTS (SELECT 1 FROM exercises e2 WHERE e2.day='A' AND e2.name='Tríceps francés con barra Z')
   `);
+  // Migración: dejar la plancha al final del Día A (solo cambia el orden, no toca registros)
+  await pool.query(`UPDATE exercises SET sort_order=8 WHERE day='A' AND name='Plancha abdominal'`);
   for (const [day, name, scheme, order] of EXERCISES) {
     await pool.query(
       'INSERT INTO exercises(day, name, scheme, sort_order) VALUES ($1,$2,$3,$4) ON CONFLICT (day, name) DO NOTHING',

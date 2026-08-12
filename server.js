@@ -20,6 +20,7 @@ const EXERCISES = [
   ['A', 'Curl de bíceps', '3 × 10-12', 5],
   ['A', 'Tríceps francés con barra Z', '3 × 10-12', 6],
   ['A', 'Plancha abdominal', '3 × 30-45 s', 8],
+  ['A', 'Caminata', 'min (Peso: 0)', 9],
   ['B', 'Peso muerto rumano', '3 × 6-8', 1],
   ['B', 'Press inclinado con mancuernas', '3 × 8-10', 2],
   ['B', 'Jalón al pecho (polea)', '3 × 10-12', 3],
@@ -27,6 +28,7 @@ const EXERCISES = [
   ['B', 'Elevaciones laterales', '3 × 12-15', 5],
   ['B', 'Tríceps en polea con soga', '3 × 12-15', 6],
   ['B', 'Curl martillo con mancuernas', '3 × 10-12', 7],
+  ['B', 'Caminata', 'min (Peso: 0)', 8],
 ];
 
 // ---------- Init de la base de datos ----------

@@ -77,14 +77,18 @@ function renderTrain() {
     const last = lastFor(ex.id);
     let lastHtml = '<span style="opacity:.7">Sin registros todavía</span>';
     if (last) {
-      const sets = last.rows.map(r => isWalk ? `${r.reps} min` : `${Number(r.weight)}×${r.reps}`).join(' · ');
+      const sets = last.rows.map(r => isWalk
+        ? `${r.reps} min` + (Number(r.weight) > 0 ? ` · ${Number(r.weight)} km` : '')
+        : `${Number(r.weight)}×${r.reps}`).join(' · ');
       lastHtml = `Último: <b>${sets}</b> · ${fmtDate(last.date)}` + (last.up ? ' <span class="pr">▲ subiste</span>' : '');
     }
     let body;
     if (isWalk) {
       body = `<div class="walkrow">
         <input inputmode="numeric" data-ex="${ex.id}" data-set="1" data-f="r" placeholder="minutos">
-        <span class="walkunit">min</span></div>`;
+        <span class="walkunit">min</span>
+        <input inputmode="decimal" data-ex="${ex.id}" data-set="1" data-f="w" placeholder="km (opcional)">
+        <span class="walkunit">km</span></div>`;
     } else {
       const rows = [1, 2, 3].map(n =>
         `<div class="sn">${n}</div>
@@ -112,8 +116,9 @@ async function saveExercise(exId, btn) {
   let valid;
   if (isWalk) {
     const r = $(`input[data-ex="${exId}"][data-set="1"][data-f="r"]`).value.trim();
+    const km = $(`input[data-ex="${exId}"][data-set="1"][data-f="w"]`).value.trim().replace(',', '.');
     if (!r) { toast('Cargá los minutos'); return; }
-    valid = [{ set_number: 1, weight: '0', reps: r }];
+    valid = [{ set_number: 1, weight: km || '0', reps: r }];
   } else {
     const entries = [1, 2, 3].map(n => {
       const w = $(`input[data-ex="${exId}"][data-set="${n}"][data-f="w"]`).value.trim().replace(',', '.');

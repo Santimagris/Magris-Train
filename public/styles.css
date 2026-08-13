@@ -70,6 +70,11 @@ header h1{font-size:24px;font-weight:800;letter-spacing:-.02em;margin-top:3px}
 .setgrid input{width:100%;background:var(--surface-2);border:1px solid var(--border);color:var(--text);
   border-radius:9px;padding:10px;font-size:16px;text-align:center;font-variant-numeric:tabular-nums}
 .setgrid input:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:transparent}
+.walkrow{display:flex;align-items:center;gap:9px;margin-top:9px}
+.walkrow input{flex:1;background:var(--surface-2);border:1px solid var(--border);color:var(--text);
+  border-radius:9px;padding:10px;font-size:16px;text-align:center;font-variant-numeric:tabular-nums}
+.walkrow input:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:transparent}
+.walkunit{font-size:13px;font-weight:700;color:var(--dim)}
 .setgrid .h{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);font-weight:700;text-align:center}
 .exnotes{width:100%;margin-top:9px;background:var(--surface-2);border:1px solid var(--border);color:var(--text);
   border-radius:9px;padding:9px 10px;font-size:14px;font-family:inherit;resize:vertical;min-height:38px}

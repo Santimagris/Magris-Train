@@ -73,21 +73,30 @@ function lastFor(exId) {
 function renderTrain() {
   const list = EXERCISES.filter(e => e.day === currentDay);
   $('#exlist').innerHTML = list.map(ex => {
+    const isWalk = ex.name === 'Caminata';
     const last = lastFor(ex.id);
     let lastHtml = '<span style="opacity:.7">Sin registros todavía</span>';
     if (last) {
-      const sets = last.rows.map(r => `${Number(r.weight)}×${r.reps}`).join(' · ');
+      const sets = last.rows.map(r => isWalk ? `${r.reps} min` : `${Number(r.weight)}×${r.reps}`).join(' · ');
       lastHtml = `Último: <b>${sets}</b> · ${fmtDate(last.date)}` + (last.up ? ' <span class="pr">▲ subiste</span>' : '');
     }
-    const rows = [1, 2, 3].map(n =>
-      `<div class="sn">${n}</div>
-       <input inputmode="decimal" data-ex="${ex.id}" data-set="${n}" data-f="w" placeholder="${last ? Number(last.top) : 'kg'}">
-       <input inputmode="numeric" data-ex="${ex.id}" data-set="${n}" data-f="r" placeholder="reps">`
-    ).join('');
+    let body;
+    if (isWalk) {
+      body = `<div class="walkrow">
+        <input inputmode="numeric" data-ex="${ex.id}" data-set="1" data-f="r" placeholder="minutos">
+        <span class="walkunit">min</span></div>`;
+    } else {
+      const rows = [1, 2, 3].map(n =>
+        `<div class="sn">${n}</div>
+         <input inputmode="decimal" data-ex="${ex.id}" data-set="${n}" data-f="w" placeholder="${last ? Number(last.top) : 'kg'}">
+         <input inputmode="numeric" data-ex="${ex.id}" data-set="${n}" data-f="r" placeholder="reps">`
+      ).join('');
+      body = `<div class="setgrid"><div></div><div class="h">Peso</div><div class="h">Reps</div>${rows}</div>`;
+    }
     return `<div class="card">
       <div class="ex-top"><div class="ex-name">${ex.name}</div><div class="ex-scheme">${ex.scheme}</div></div>
       <div class="last" id="last-${ex.id}">${lastHtml}</div>
-      <div class="setgrid"><div></div><div class="h">Peso</div><div class="h">Reps</div>${rows}</div>
+      ${body}
       <textarea class="exnotes" data-ex="${ex.id}" placeholder="Notas (opcional): sensación, molestia, etc."></textarea>
       <button class="savebtn" data-ex="${ex.id}">Guardar ${ex.name.split(' ')[0].toLowerCase()}</button>
     </div>`;
@@ -98,14 +107,22 @@ function renderTrain() {
 }
 
 async function saveExercise(exId, btn) {
-  const entries = [1, 2, 3].map(n => {
-    const w = $(`input[data-ex="${exId}"][data-set="${n}"][data-f="w"]`).value.trim().replace(',', '.');
-    const r = $(`input[data-ex="${exId}"][data-set="${n}"][data-f="r"]`).value.trim();
-    return { set_number: n, weight: w, reps: r };
-  });
+  const isWalk = EXERCISES.find(e => e.id === exId)?.name === 'Caminata';
   const notes = $(`textarea[data-ex="${exId}"]`).value.trim();
-  const valid = entries.filter(e => e.weight && e.reps);
-  if (!valid.length) { toast('Cargá al menos una serie'); return; }
+  let valid;
+  if (isWalk) {
+    const r = $(`input[data-ex="${exId}"][data-set="1"][data-f="r"]`).value.trim();
+    if (!r) { toast('Cargá los minutos'); return; }
+    valid = [{ set_number: 1, weight: '0', reps: r }];
+  } else {
+    const entries = [1, 2, 3].map(n => {
+      const w = $(`input[data-ex="${exId}"][data-set="${n}"][data-f="w"]`).value.trim().replace(',', '.');
+      const r = $(`input[data-ex="${exId}"][data-set="${n}"][data-f="r"]`).value.trim();
+      return { set_number: n, weight: w, reps: r };
+    });
+    valid = entries.filter(e => e.weight && e.reps);
+    if (!valid.length) { toast('Cargá al menos una serie'); return; }
+  }
 
   const res = await api('/api/sets', {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -118,7 +135,7 @@ async function saveExercise(exId, btn) {
   await reloadUserData();
   // limpiar reps, refrescar "último"
   $(`textarea[data-ex="${exId}"]`).value = '';
-  [1, 2, 3].forEach(n => { $(`input[data-ex="${exId}"][data-set="${n}"][data-f="r"]`).value = ''; });
+  document.querySelectorAll(`input[data-ex="${exId}"][data-f="r"]`).forEach(i => { i.value = ''; });
   setTimeout(() => renderTrain(), 700);
 }
 

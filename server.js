@@ -20,7 +20,7 @@ const EXERCISES = [
   ['A', 'Curl de bíceps', '3 × 10-12', 5],
   ['A', 'Tríceps francés con barra Z', '3 × 10-12', 6],
   ['A', 'Plancha abdominal', '3 × 30-45 s', 8],
-  ['A', 'Caminata', 'min (Peso: 0)', 9],
+  ['A', 'Caminata', 'minutos', 9],
   ['B', 'Peso muerto rumano', '3 × 6-8', 1],
   ['B', 'Press inclinado con mancuernas', '3 × 8-10', 2],
   ['B', 'Jalón al pecho (polea)', '3 × 10-12', 3],
@@ -28,7 +28,7 @@ const EXERCISES = [
   ['B', 'Elevaciones laterales', '3 × 12-15', 5],
   ['B', 'Tríceps en polea con soga', '3 × 12-15', 6],
   ['B', 'Curl martillo con mancuernas', '3 × 10-12', 7],
-  ['B', 'Caminata', 'min (Peso: 0)', 8],
+  ['B', 'Caminata', 'minutos', 8],
 ];
 
 // ---------- Init de la base de datos ----------
@@ -80,6 +80,8 @@ async function init() {
   `);
   // Migración: dejar la plancha al final del Día A (solo cambia el orden, no toca registros)
   await pool.query(`UPDATE exercises SET sort_order=8 WHERE day='A' AND name='Plancha abdominal'`);
+  // Migración: Caminata solo pide minutos (actualiza el rótulo del esquema; no toca registros)
+  await pool.query(`UPDATE exercises SET scheme='minutos' WHERE name='Caminata'`);
   for (const [day, name, scheme, order] of EXERCISES) {
     await pool.query(
       'INSERT INTO exercises(day, name, scheme, sort_order) VALUES ($1,$2,$3,$4) ON CONFLICT (day, name) DO NOTHING',
